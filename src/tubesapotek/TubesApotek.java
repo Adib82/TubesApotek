@@ -1,6 +1,7 @@
 package tubesapotek;
 
 import config.koneksi;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class TubesApotek {
@@ -10,7 +11,7 @@ public class TubesApotek {
     boolean isLoggedIn = false;
     boolean isAdmin = false;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         do {
             tk.login();
         } while (!tk.isLoggedIn);
@@ -29,7 +30,6 @@ public class TubesApotek {
         System.out.print("Password: ");
         String password = scanner.nextLine();
 
-        //proses cek login menggunakan koneksi ke database
         if (db.authenticateAdmin(username, password)) {
             isAdmin = true;
             isLoggedIn = true;
@@ -43,7 +43,7 @@ public class TubesApotek {
         }
     }
 
-    public void menuKasir() {
+    public void menuKasir() throws SQLException {
         System.out.println("===MENU Kasir===");
         System.out.println("1. Penjualan Obat");       
         System.out.println("2. Detail Penjualan Obat");
@@ -58,7 +58,16 @@ public class TubesApotek {
             System.out.println("4. View"); 
             System.out.print("Pilih: ");
             menu = scanner.nextInt();
-            kasir ks1 = new kasir(menu);
+            kasir ks1 = new kasir();
+            if(menu==1){
+                ks1.tambahPenjualanObat();
+            }else if(menu==2){
+                ks1.editPenjualanObat();
+            }else if(menu==3){
+                ks1.deletePenjualanObat();
+            }else if(menu==4){
+                ks1.viewAllPenjualanObat();
+            }
             
             break;
           case 2:
@@ -69,7 +78,8 @@ public class TubesApotek {
             System.out.println("4. View"); 
             System.out.print("Pilih: ");
             menu = scanner.nextInt();
-            kasir ks2 = new kasir(menu);
+            kasir ks2 = new kasir();
+            
             break;
           default:
             System.out.println("tidur");
