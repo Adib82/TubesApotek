@@ -4,9 +4,9 @@ import config.koneksi;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-public class TubesApotek {
+public class main {
     koneksi db = new koneksi();
-    static TubesApotek tk = new TubesApotek();
+    static main tk = new main();
     Scanner scanner = new Scanner(System.in);
     boolean isLoggedIn = false;
     boolean isAdmin = false;
@@ -58,7 +58,7 @@ public class TubesApotek {
             System.out.println("4. View"); 
             System.out.print("Pilih: ");
             menu = scanner.nextInt();
-            kasir ks1 = new kasir();
+            penjualanobat ks1 = new penjualanobat();
             if(menu==1){
                 ks1.tambahPenjualanObat();
             }else if(menu==2){
@@ -78,7 +78,7 @@ public class TubesApotek {
             System.out.println("4. View"); 
             System.out.print("Pilih: ");
             menu = scanner.nextInt();
-            kasir ks2 = new kasir();
+            penjualanobat ks2 = new penjualanobat();
             
             break;
           default:
@@ -106,7 +106,7 @@ public class TubesApotek {
             System.out.println("4. View"); 
             System.out.print("Pilih: ");
             menu = scanner.nextInt();
-            admin adm1 = new admin(menu);
+            pembelianobat adm1 = new pembelianobat(menu);
             
             break;
         case 2:
@@ -117,7 +117,7 @@ public class TubesApotek {
             System.out.println("4. View"); 
             System.out.print("Pilih: ");
             menu = scanner.nextInt();
-            admin adm2 = new admin(menu);
+            pembelianobat adm2 = new pembelianobat(menu);
             break;
         case 3:
             System.out.println("==Supplier==");
@@ -127,7 +127,7 @@ public class TubesApotek {
             System.out.println("4. View"); 
             System.out.print("Pilih: ");
             menu = scanner.nextInt();
-            admin adm3 = new admin(menu);
+            pembelianobat adm3 = new pembelianobat(menu);
             break;
         case 4:
             System.out.println("==Obat==");
@@ -137,7 +137,7 @@ public class TubesApotek {
             System.out.println("4. View"); 
             System.out.print("Pilih: ");
             menu = scanner.nextInt();
-            admin adm4 = new admin(menu);
+            pembelianobat adm4 = new pembelianobat(menu);
             break;
         case 5:
             System.out.println("==Kategori==");
@@ -147,7 +147,7 @@ public class TubesApotek {
             System.out.println("4. View"); 
             System.out.print("Pilih: ");
             menu = scanner.nextInt();
-            admin adm5 = new admin(menu);
+            pembelianobat adm5 = new pembelianobat(menu);
             break;
         default:
             System.out.println("tidur");

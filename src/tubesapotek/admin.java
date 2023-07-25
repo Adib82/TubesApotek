@@ -9,7 +9,33 @@ package tubesapotek;
  * @author ADIB FIRMANSYAH
  */
 public class admin {
-    public admin(int pilih){
-        System.out.println("admin");
+    
+    public int idAdmin;
+    public String username;
+    public String password;
+
+    public int getIdAdmin() {
+        return idAdmin;
     }
+
+    public void setIdAdmin(int idAdmin) {
+        this.idAdmin = idAdmin;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+   
 }
