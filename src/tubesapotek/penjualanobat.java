@@ -1,4 +1,5 @@
 package tubesapotek;
+
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -7,7 +8,7 @@ import java.sql.SQLException;
 import config.koneksi;
 import java.util.Scanner;
 
-public class penjualanobat extends kasir{
+public class penjualanobat extends kasir {
     private Connection conn;
     private PreparedStatement pstmt;
     private ResultSet rs;
@@ -17,35 +18,34 @@ public class penjualanobat extends kasir{
         conn = koneksi.getConnection();
         scanner = new Scanner(System.in);
     }
-    
-   public void tambahPenjualanObat() {
+
+    public void tambahPenjualanObat() {
         try {
             System.out.println("== Tambah Penjualan Obat ==");
-            
+
             obat ob = new obat();
             ob.view();
 
             System.out.print("Masukkan Nama Obat: ");
             String namaObat = scanner.nextLine();
-            
+
             ob.getIdObat(namaObat);
             int idObat = ob.idObat;
-            
+
             System.out.print("Masukkan Tanggal Transaksi (yyyy-MM-dd): ");
             String tglTransaksi = scanner.nextLine();
             Date tanggalTransaksi = Date.valueOf(tglTransaksi);
 
             System.out.print("Masukkan jumlah obat: ");
             int jumlahObat = scanner.nextInt();
-            
+
             ob.updateStockObatById(idObat, jumlahObat);
-           
 
             ob.getHargaByIdObat(namaObat);
             double harga = ob.hargaObat;
 
-            double total = harga*jumlahObat;
-            
+            double total = harga * jumlahObat;
+
             String querypenjualanobat = "INSERT INTO penjualanobat (idKasir, namaObat,                                     tglTransaksi, total) VALUES (?, ?, ?, ?)";
             pstmt = conn.prepareStatement(querypenjualanobat);
             pstmt.setInt(1, this.idKasir);
@@ -73,9 +73,6 @@ public class penjualanobat extends kasir{
             e.printStackTrace();
         }
     }
-   
-
-
 
     public void viewAllPenjualanObat() {
         try {
@@ -132,8 +129,7 @@ public class penjualanobat extends kasir{
             e.printStackTrace();
         }
     }
-    
-    
+
     public void editPenjualanObat() {
         try {
             System.out.println("== Edit Detail Penjualan Obat ==");
