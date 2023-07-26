@@ -3,9 +3,9 @@ package tubesapotek;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import config.koneksi;
@@ -68,9 +68,30 @@ public class obat{
     }
 
     // Metode Create: Menambahkan data obat ke database
-    public void tambahObat(String namaObat, String keterangan, Date tglExp, int stokObat, double hargaObat) throws SQLException {
-        String sql = "INSERT INTO obat (namaObat, keterangan, tglEXP, stokObat, harga) VALUES (?, ?, ?, ?, ?)";
+    public void tambahObat() throws SQLException {
+        try{
+        System.out.println("== Tambah Obat ==");
 
+            System.out.print("Masukkan Nama Obat: ");
+            String namaObat = scanner.nextLine();
+
+            System.out.print("Masukkan Keterangan Obat: ");
+            String keterangan = scanner.nextLine();
+            scanner.nextLine();
+
+            System.out.print("Masukkan Tanggal Expired: ");
+            String tglExpiredString = scanner.nextLine();
+            Date tglExp = Date.valueOf(tglExpiredString);
+
+            System.out.print("Masukkan Stok Obat: ");
+            int stokObat = scanner.nextInt();
+            scanner.nextLine();
+
+            System.out.print("Masukkan Harga Obat: ");
+            double hargaObat = scanner.nextInt();
+            scanner.nextLine();
+
+        String sql = "INSERT INTO obat (namaObat, keterangan, tglEXP, stokObat, harga) VALUES (?, ?, ?, ?, ?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         pstmt.setString(1, namaObat);
         pstmt.setString(2, keterangan);
@@ -80,6 +101,9 @@ public class obat{
 
         pstmt.executeUpdate();
         System.out.println("Data obat berhasil ditambahkan ke database.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     // Metode Read: Mengambil data obat dari database berdasarkan ID
@@ -105,9 +129,27 @@ public class obat{
     }
 
     // Metode Update: Mengubah data obat di database berdasarkan ID
-    public void updateObat(int idObat) throws SQLException {
-        String sql = "UPDATE obat SET namaObat = ?, keterangan = ?, tglEXP = ?, stokObat = ?, harga = ? WHERE idObat = ?";
+    public void updateObat() throws SQLException {
+        try{
+            System.out.println("== Edit Obat ==");
 
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("Masukkan ID Obat yang akan di-edit: ");
+            int idObat = scanner.nextInt();
+            scanner.nextLine();
+
+            System.out.print("Masukkan Keterangan Obat Baru: ");
+            String keterangan = scanner.nextLine();
+
+            System.out.print("Masukkan Tanggal Expired Obat Baru: ");
+            String tglExpiredString = scanner.nextLine();
+            Date tglExp = Date.valueOf(tglExpiredString);
+
+            System.out.print("Masukkan Harga Obat Baru: ");
+            Double hargaObat = scanner.nextDouble();
+            scanner.nextLine();
+
+        String sql = "UPDATE obat SET namaObat = ?, keterangan = ?, tglEXP = ?, stokObat = ?, harga = ? WHERE idObat = ?";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         pstmt.setString(1, namaObat);
         pstmt.setString(2, keterangan);
@@ -118,10 +160,18 @@ public class obat{
 
         pstmt.executeUpdate();
         System.out.println("Data obat berhasil diperbarui.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     // Metode Delete: Menghapus data obat dari database berdasarkan ID
-    public void hapusObat(int idObat) throws SQLException {
+    public void hapusObat() throws SQLException {
+        try{
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("Masukkan ID Obat yang akan di-edit: ");
+            int idObat = scanner.nextInt();
+            scanner.nextLine();
         String sql = "DELETE FROM obat WHERE idObat = ?";
 
         PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -129,6 +179,9 @@ public class obat{
 
         pstmt.executeUpdate();
         System.out.println("Data obat berhasil dihapus dari database.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     // Metode untuk mengambil semua data obat dari database
