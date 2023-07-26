@@ -11,7 +11,7 @@ public class main {
     Scanner scanner = new Scanner(System.in);
     static boolean isLoggedIn = false;
     boolean isAdmin = false;
-
+    
     public void clear() {
         try {
             String os = System.getProperty("os.name").toLowerCase();
