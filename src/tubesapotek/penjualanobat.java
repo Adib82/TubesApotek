@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import config.koneksi;
 import java.util.Scanner;
 
-public class penjualanobat {
+public class penjualanobat extends kasir{
     private Connection conn;
     private PreparedStatement pstmt;
     private ResultSet rs;
@@ -21,17 +21,15 @@ public class penjualanobat {
    public void tambahPenjualanObat() {
         try {
             System.out.println("== Tambah Penjualan Obat ==");
-
-            System.out.print("Masukkan ID Kasir: ");
-            int idKasir = scanner.nextInt();
-            scanner.nextLine();
-                
-            System.out.print("Masukkan idObat: ");
-            int idObat = scanner.nextInt();
-            scanner.nextLine();
+            
+            obat ob = new obat();
+            ob.view();
 
             System.out.print("Masukkan Nama Obat: ");
             String namaObat = scanner.nextLine();
+            
+            ob.getIdObat(namaObat);
+            int idObat = ob.idObat;
             
             System.out.print("Masukkan Tanggal Transaksi (yyyy-MM-dd): ");
             String tglTransaksi = scanner.nextLine();
@@ -39,16 +37,18 @@ public class penjualanobat {
 
             System.out.print("Masukkan jumlah obat: ");
             int jumlahObat = scanner.nextInt();
-            scanner.nextLine();
+            
+            ob.updateStockObatById(idObat, jumlahObat);
+           
 
-            System.out.print("Masukkan harga: ");
-            int harga = scanner.nextInt();
+            ob.getHargaByIdObat(namaObat);
+            double harga = ob.hargaObat;
 
             double total = harga*jumlahObat;
             
-            String querypenjualanobat = "INSERT INTO penjualanobat (idKasir, namaObat,                                        tglTransaksi, total) VALUES (?, ?, ?, ?)";
+            String querypenjualanobat = "INSERT INTO penjualanobat (idKasir, namaObat,                                     tglTransaksi, total) VALUES (?, ?, ?, ?)";
             pstmt = conn.prepareStatement(querypenjualanobat);
-            pstmt.setInt(1, idKasir);
+            pstmt.setInt(1, this.idKasir);
             pstmt.setString(2, namaObat);
             pstmt.setDate(3, tanggalTransaksi);
             pstmt.setDouble(4, total);

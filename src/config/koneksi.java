@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import tubesapotek.kasir;
 
 public class koneksi {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/apotek";
@@ -22,6 +23,7 @@ public class koneksi {
             pstmt.setString(1, username);
             pstmt.setString(2, password);
             ResultSet rs = pstmt.executeQuery();
+            
             return rs.next();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -31,6 +33,8 @@ public class koneksi {
 
     public boolean authenticateKasir(String username, String password) {
         try (Connection conn = getConnection()) {
+            kasir ks= new kasir();
+            ks.getIdKasir(username);
             String query = "SELECT * FROM kasir WHERE username=? AND password=?";
             PreparedStatement pstmt = conn.prepareStatement(query);
             pstmt.setString(1, username);

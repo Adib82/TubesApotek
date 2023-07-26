@@ -1,46 +1,85 @@
 package tubesapotek;
 
 import config.koneksi;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Scanner;
+
+
 
 public class main {
     koneksi db = new koneksi();
     static main tk = new main();
     Scanner scanner = new Scanner(System.in);
-    boolean isLoggedIn = false;
+    static boolean isLoggedIn = false;
     boolean isAdmin = false;
+    
+    
+    public void clear() {
+        try {
+            String os = System.getProperty("os.name").toLowerCase();
 
-    public static void main(String[] args) throws SQLException {
-        do {
-            tk.login();
-        } while (!tk.isLoggedIn);
+            if (os.contains("win")) {
+                ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", "cls");
+                processBuilder.inheritIO().start().waitFor();
+            } else {
+                ProcessBuilder processBuilder = new ProcessBuilder("clear");
+                processBuilder.inheritIO().start().waitFor();
+            }
 
-        if (tk.isAdmin) {
-            tk.menuAdmin();
-        } else {
-            tk.menuKasir();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
+    public static void main(String[] args) throws SQLException {
+        int pilih=0;
+        do { 
+            tk.login();
+            if(isLoggedIn==true){
+                if (tk.isAdmin) {
+                    tk.menuAdmin();
+                } else {
+                    tk.menuKasir();
+                }
+            } 
+        } while (pilih!=4);  
+    }
+
     public void login() {
+         System.out.println("Pilih login sebagai");
+         System.out.println("1. kasir");
+         System.out.println("2. admin");
+         System.out.print("pilih: ");
+         int pilih = scanner.nextInt();
+
+        
         System.out.println("===LOGIN===");
         System.out.print("Username: ");
-        String username = scanner.nextLine();
+        String username = scanner.next();
         System.out.print("Password: ");
-        String password = scanner.nextLine();
-
-        if (db.authenticateAdmin(username, password)) {
-            isAdmin = true;
-            isLoggedIn = true;
-            System.out.println("Login berhasil sebagai admin!");
-        } else if (db.authenticateKasir(username, password)) {
-            isAdmin = false;
-            isLoggedIn = true;
-            System.out.println("Login berhasil sebagai kasir!");
-        } else {
-            System.out.println("Login gagal. Periksa kembali username dan password Anda.");
+        String password = scanner.next();
+        
+        if(pilih==1){
+            if (db.authenticateKasir(username, password)) {
+                isAdmin = false;
+                isLoggedIn = true;
+                System.out.println("Login berhasil sebagai kasir!");
+            }else {
+                System.out.println("Login gagal. Periksa kembali username dan password Anda.");
+            }
+        }else if(pilih==2){
+            if (db.authenticateAdmin(username, password)) {
+                isAdmin = true;
+                isLoggedIn = true;
+                System.out.println("Login berhasil sebagai admin!");
+            } else {
+                System.out.println("Login gagal. Periksa kembali username dan password Anda.");
+            }
+        }else{
+            System.out.println("Masukkan input yang benar");
         }
+       
     }
 
     public void menuKasir() throws SQLException {
