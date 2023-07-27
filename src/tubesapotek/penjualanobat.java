@@ -1,4 +1,5 @@
 package tubesapotek;
+
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -17,22 +18,22 @@ public class penjualanobat {
         conn = koneksi.getConnection();
         scanner = new Scanner(System.in);
     }
-    
-   public void tambahPenjualanObat() {
+
+    public void tambahPenjualanObat() {
         try {
             System.out.println("== Tambah Penjualan Obat ==");
 
             System.out.print("Masukkan ID Kasir: ");
             int idKasir = scanner.nextInt();
             scanner.nextLine();
-                
+
             System.out.print("Masukkan idObat: ");
             int idObat = scanner.nextInt();
             scanner.nextLine();
 
             System.out.print("Masukkan Nama Obat: ");
             String namaObat = scanner.nextLine();
-            
+
             System.out.print("Masukkan Tanggal Transaksi (yyyy-MM-dd): ");
             String tglTransaksi = scanner.nextLine();
             Date tanggalTransaksi = Date.valueOf(tglTransaksi);
@@ -44,9 +45,9 @@ public class penjualanobat {
             System.out.print("Masukkan harga: ");
             int harga = scanner.nextInt();
 
-            double total = harga*jumlahObat;
-            
-            String querypenjualanobat = "INSERT INTO penjualanobat (idKasir, namaObat,                                        tglTransaksi, total) VALUES (?, ?, ?, ?)";
+            double total = harga * jumlahObat;
+
+            String querypenjualanobat = "INSERT INTO penjualanobat (idKasir, namaObat, tglTransaksi, total) VALUES (?, ?, ?, ?)";
             pstmt = conn.prepareStatement(querypenjualanobat);
             pstmt.setInt(1, idKasir);
             pstmt.setString(2, namaObat);
@@ -73,9 +74,6 @@ public class penjualanobat {
             e.printStackTrace();
         }
     }
-   
-
-
 
     public void viewAllPenjualanObat() {
         try {
@@ -132,8 +130,7 @@ public class penjualanobat {
             e.printStackTrace();
         }
     }
-    
-    
+
     public void editPenjualanObat() {
         try {
             System.out.println("== Edit Detail Penjualan Obat ==");
