@@ -73,9 +73,6 @@ public class penjualanobat {
             e.printStackTrace();
         }
     }
-   
-
-
 
     public void viewAllPenjualanObat() {
         try {
