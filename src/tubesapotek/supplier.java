@@ -7,77 +7,81 @@ import java.sql.SQLException;
 import config.koneksi;
 import java.util.Scanner;
 
-public class supplier {
+public class supplier extends obat {
     private Connection conn;
     private PreparedStatement pstmt;
     private ResultSet rs;
     private Scanner scanner;
 
-    private int idSupplier;
-    private int idObat;
+    public int idSupplier;
+    public int idObat;
+    public int maxidSupplier;
     private String namaSupplier;
     private String noHP;
     private String alamat;
 
-    public supplier() {
-        this.idSupplier = idSupplier;
-        this.idObat = idObat;
-        this.namaSupplier = namaSupplier;
-        this.noHP = noHP;
-        this.alamat = alamat;
+    public supplier() throws SQLException {
+        conn = koneksi.getConnection();
+        scanner = new Scanner(System.in);
     }
 
-    public int getIdSupplier() {
+    public int getIdSupplier(String namaSupplier) {
+        try {
+            String query = "SELECT idSupplier FROM supplier WHERE namaSupplier=?";
+            pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, namaSupplier);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                this.idSupplier = rs.getInt("idSupplier");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return idSupplier;
     }
 
-    public int getIdObat() {
+    public int getIdObat(int idSupplier) {
+        try {
+            String query = "SELECT idObat FROM supplier WHERE idSupplier=?";
+            pstmt = conn.prepareStatement(query);
+            pstmt.setInt(1, idSupplier);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                this.idObat = rs.getInt("idObat");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return idObat;
     }
 
-    public String getNamaSupplier() {
-        return namaSupplier;
-    }
+    public int getMaxIdSupplier() {
+        try {
+            String query = "SELECT MAX(idSupplier) AS maxId FROM supplier";
+            pstmt = conn.prepareStatement(query);
+            rs = pstmt.executeQuery();
 
-    public String getNoHP() {
-        return noHP;
-    }
+            if (rs.next()) {
+                this.maxidSupplier = rs.getInt("maxId");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-    public String getAlamat() {
-        return alamat;
-    }
-
-    public void setIdSupplier(int idSupplier) {
-        this.idSupplier = idSupplier;
-    }
-
-    public void setIdObat(int idObat) {
-        this.idObat = idObat;
-    }
-
-    public void setNamaSupplier(String namaSupplier) {
-        this.namaSupplier = namaSupplier;
-    }
-
-    public void setAlamat(String alamat) {
-        this.alamat = alamat;
-    }
-
-    public void setNoHP(String noHP) {
-        this.noHP = noHP;
+        return maxidSupplier;
     }
 
     public void tambahSupplier() {
         try {
             System.out.println("== Tambah Data Supplier ==");
 
-            System.out.print("Masukkan ID Supplier: ");
-            int idSupplier = scanner.nextInt();
-            scanner.nextLine();
-
-            System.out.print("Masukkan ID Obat: ");
-            int idObat = scanner.nextInt();
-            scanner.nextLine();
+            getMaxIdSupplier();
+            int idSupplier = maxidSupplier;
+            idSupplier++;
 
             System.out.print("Masukkan Nama Supplier: ");
             String namaSupplier = scanner.nextLine();
@@ -88,13 +92,12 @@ public class supplier {
             System.out.print("Masukkan Alamat Supplier: ");
             String alamat = scanner.nextLine();
 
-            String querysupplier = "INSERT INTO supplier (idSupplier, idObat, namaSupplier, noHP, alamat) VALUES (?, ?, ?, ?, ?)";
+            String querysupplier = "INSERT INTO supplier (idSupplier, namaSupplier, noHP, alamat) VALUES (?, ?, ?, ?)";
             pstmt = conn.prepareStatement(querysupplier);
             pstmt.setInt(1, idSupplier);
-            pstmt.setInt(2, idObat);
-            pstmt.setString(3, namaSupplier);
-            pstmt.setString(4, noHP);
-            pstmt.setString(5, alamat);
+            pstmt.setString(2, namaSupplier);
+            pstmt.setString(3, noHP);
+            pstmt.setString(4, alamat);
 
             int rowsAffected1 = pstmt.executeUpdate();
 
@@ -109,29 +112,44 @@ public class supplier {
     }
 
     public void viewSupplier() {
+
         try {
-            System.out.println("== Daftar Data Supplier ==");
+            conn = koneksi.getConnection();
             String query = "SELECT * FROM supplier";
             pstmt = conn.prepareStatement(query);
             rs = pstmt.executeQuery();
 
-            while (rs.next()) {
-                int idSupplier = rs.getInt("idSupplier");
-                int idObat = rs.getInt("idObat");
-                String namaSupplier = rs.getString("namaSuppplier");
-                String noHP = rs.getString("noHP");
-                String alamat = rs.getString("alamat");
+            // Get jumlah kolom dari query
+            int columns = rs.getMetaData().getColumnCount();
 
-                System.out.println("ID Supplier: " + idSupplier);
-                System.out.println("ID Obat: " + idObat);
-                System.out.println("Nama Supplier: " + namaSupplier);
-                System.out.println("Nomor HP: " + noHP);
-                System.out.println("Alamat: " + alamat);
-                System.out.println("-------------------------");
+            printLine(columns);
+
+            for (int i = 1; i <= columns; i++) {
+                System.out.printf("| %-15s ", rs.getMetaData().getColumnName(i));
             }
+            System.out.println("|");
+            printLine(columns);
+
+            // Print tabel
+            while (rs.next()) {
+                for (int i = 1; i <= columns; i++) {
+                    System.out.printf("| %-15s ", rs.getString(i));
+                }
+                System.out.println("|");
+            }
+
+            printLine(columns);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void printLine(int columns) {
+        for (int i = 0; i < columns; i++) {
+            System.out.print("+---------------");
+        }
+        System.out.println("+");
     }
 
     public void deleteSupplier() {
@@ -168,20 +186,21 @@ public class supplier {
             scanner.nextLine();
 
             System.out.print("Masukkan Nama Supplier: ");
-            String namaSupplier = scanner.nextLine();
+            String namaSupplier = scanner.next();
 
             System.out.print("Masukkan Nomor HP Supplier: ");
-            String noHP = scanner.nextLine();
+            String noHP = scanner.next();
 
             System.out.print("Masukkan Alamat Supplier: ");
-            String alamat = scanner.nextLine();
+            String alamat = scanner.next();
 
             Connection conn = koneksi.getConnection();
-            String query = "UPDATE supplier SET namaSupplier=?, noHP=?, alamat=? WHERE idSupplier=?";
+            String query = "UPDATE supplier SET namaSupplier=?, noHP=?, alamat=?                  WHERE                           idSupplier=?";
             PreparedStatement pstmt = conn.prepareStatement(query);
             pstmt.setString(1, namaSupplier);
             pstmt.setString(2, noHP);
             pstmt.setString(3, alamat);
+            pstmt.setInt(4, idSupplier);
 
             int rowsAffected = pstmt.executeUpdate();
             if (rowsAffected > 0) {
@@ -192,6 +211,39 @@ public class supplier {
 
             pstmt.close();
             conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void viewsupobat() {
+        try {
+            conn = koneksi.getConnection();
+            String query = "SELECT s.idSupplier, s.namaSupplier, o.namaObat from supplier s join obat o on o.idObat = s.idObat ORDER BY s.idSupplier ASC;";
+            pstmt = conn.prepareStatement(query);
+            rs = pstmt.executeQuery();
+
+            // Get jumlah kolom dari query
+            int columns = rs.getMetaData().getColumnCount();
+
+            printLine(columns);
+
+            for (int i = 1; i <= columns; i++) {
+                System.out.printf("| %-15s ", rs.getMetaData().getColumnName(i));
+            }
+            System.out.println("|");
+            printLine(columns);
+
+            // Print tabel
+            while (rs.next()) {
+                for (int i = 1; i <= columns; i++) {
+                    System.out.printf("| %-15s ", rs.getString(i));
+                }
+                System.out.println("|");
+            }
+
+            printLine(columns);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }

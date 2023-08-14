@@ -1,18 +1,30 @@
 package tubesapotek;
 
 import config.koneksi;
+import java.io.Console;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-public class main {
-    koneksi db = new koneksi();
+public class main extends koneksi {
     static main tk = new main();
-    Scanner scanner = new Scanner(System.in);
+    static Scanner scanner = new Scanner(System.in);
     static boolean isLoggedIn = false;
     boolean isAdmin = false;
-    
-    public void clear() {
+
+    private static boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        try {
+            double d = Double.parseDouble(strNum);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
+    }
+
+    private void clear() {
         try {
             String os = System.getProperty("os.name").toLowerCase();
 
@@ -29,164 +41,435 @@ public class main {
         }
     }
 
-    public static void main(String[] args) throws SQLException {
-        int pilih = 0;
+    public static void main(String[] args) throws SQLException, Exception {
+        tk.clear();
+        tk.login();
+        int ulang = 0;
         do {
-            tk.login();
+            tk.clear();
             if (isLoggedIn == true) {
                 if (tk.isAdmin) {
                     tk.menuAdmin();
+                    System.out.print("ingin kembali?(y)");
+                    String pilih = scanner.next();
+                    if (String.valueOf(pilih).equals("y")) {
+                        try {
+                            tk.clear();
+                            System.out.println("KEMBALI KE MENU SEBELUMNYA!");
+                            Thread.sleep(3000);
+                            tk.clear();
+                        } catch (InterruptedException e) {
+                            System.out.println(e);
+                        }
+                    } else {
+                        try {
+                            tk.clear();
+                            System.out.println("input salah, kembali ke menu awal");
+                            Thread.sleep(3000);
+                            tk.clear();
+                        } catch (InterruptedException e) {
+                            System.out.println(e);
+                        }
+                    }
                 } else {
                     tk.menuKasir();
+                    System.out.print("ingin kembali?(y)");
+                    String pilih = scanner.next();
+                    if (String.valueOf(pilih).equals("y")) {
+                        try {
+                            tk.clear();
+                            System.out.println("KEMBALI KE MENU SEBELUMNYA!");
+                            Thread.sleep(3000);
+                            tk.clear();
+                        } catch (InterruptedException e) {
+                            System.out.println(e);
+                        }
+                    } else {
+                        try {
+                            tk.clear();
+                            System.out.println("input salah, kembali ke menu awal");
+                            Thread.sleep(3000);
+                            tk.clear();
+                        } catch (InterruptedException e) {
+                            System.out.println(e);
+                        }
+                    }
                 }
             }
-        } while (pilih != 4);
+        } while (ulang != 4);
     }
 
-    public void login() {
+    private void login() throws SQLException, Exception {
         System.out.println("Pilih login sebagai");
         System.out.println("1. kasir");
         System.out.println("2. admin");
         System.out.print("pilih: ");
-        int pilih = scanner.nextInt();
+        String pilih = scanner.next();
 
-        System.out.println("===LOGIN===");
-        System.out.print("Username: ");
-        String username = scanner.next();
-        System.out.print("Password: ");
-        String password = scanner.next();
-
-        if (pilih == 1) {
-            if (db.authenticateKasir(username, password)) {
-                isAdmin = false;
-                isLoggedIn = true;
-                System.out.println("Login berhasil sebagai kasir!");
+        if (isNumeric(String.valueOf(pilih))) {
+            if (pilih.equals("1")) {
+                tk.clear();
+                String username = "";
+                String password = "";
+                Console console = System.console();
+                if (console == null) {
+                    System.out.println("===LOGIN Kasir===");
+                    System.out.print("Username: ");
+                    username = scanner.next();
+                    System.out.print("Password: ");
+                    password = scanner.next();
+                } else {
+                    System.out.println("===LOGIN Kasir===");
+                    username = console.readLine("Enter Username: ");
+                    password = new String(console.readPassword("Enter Password: "));
+                }
+                if (authenticateKasir(username, password)) {
+                    isAdmin = false;
+                    isLoggedIn = true;
+                    System.out.println("Login berhasil sebagai kasir!");
+                } else {
+                    try {
+                        tk.clear();
+                        System.out.println("Login gagal. Periksa kembali username dan password Anda.");
+                        Thread.sleep(3000);
+                        tk.clear();
+                        main(null);
+                    } catch (InterruptedException e) {
+                        System.out.println(e);
+                    }
+                }
+            } else if (pilih.equals("2")) {
+                tk.clear();
+                String username = "";
+                String password = "";
+                Console console = System.console();
+                if (console == null) {
+                    System.out.println("===LOGIN Admin===");
+                    System.out.print("Username: ");
+                    username = scanner.next();
+                    System.out.print("Password: ");
+                    password = scanner.next();
+                } else {
+                    System.out.println("===LOGIN Admin===");
+                    username = console.readLine("Enter Username: ");
+                    password = new String(console.readPassword("Enter Password: "));
+                }
+                if (authenticateAdmin(username, password)) {
+                    isAdmin = true;
+                    isLoggedIn = true;
+                    System.out.println("Login berhasil sebagai admin!");
+                } else {
+                    try {
+                        tk.clear();
+                        System.out.println("Login gagal. Periksa kembali username dan password Anda.");
+                        Thread.sleep(3000);
+                        tk.clear();
+                        main(null);
+                    } catch (InterruptedException e) {
+                        System.out.println(e);
+                    }
+                }
             } else {
-                System.out.println("Login gagal. Periksa kembali username dan password Anda.");
-            }
-        } else if (pilih == 2) {
-            if (db.authenticateAdmin(username, password)) {
-                isAdmin = true;
-                isLoggedIn = true;
-                System.out.println("Login berhasil sebagai admin!");
-            } else {
-                System.out.println("Login gagal. Periksa kembali username dan password Anda.");
+                try {
+                    tk.clear();
+                    System.out.println("Masukkan input yang benar");
+                    Thread.sleep(3000);
+                    tk.clear();
+                    main(null);
+                } catch (InterruptedException e) {
+                    System.out.println(e);
+                }
             }
         } else {
-            System.out.println("Masukkan input yang benar");
+            try {
+                tk.clear();
+                System.out.println("Masukkan input yang benar (angka)");
+                Thread.sleep(3000);
+                tk.clear();
+                main(null);
+            } catch (InterruptedException e) {
+                System.out.println(e);
+            }
         }
 
     }
 
-    public void menuKasir() throws SQLException {
+    public void menuKasir() throws SQLException, Exception {
         System.out.println("===MENU Kasir===");
         System.out.println("1. Penjualan Obat");
-        System.out.println("2. Detail Penjualan Obat");
+        System.out.println("2. Pesanan");
+        System.out.println("3. Log out");
         System.out.print("Pilih: ");
-        int menu = scanner.nextInt();
-        switch (menu) {
-            case 1:
-                System.out.println("==Penjualan Obat==");
-                System.out.println("1. Tambah");
-                System.out.println("2. Edit");
-                System.out.println("3. Delete");
-                System.out.println("4. View");
-                System.out.print("Pilih: ");
-                menu = scanner.nextInt();
-                penjualanobat ks1 = new penjualanobat();
-                if (menu == 1) {
-                    ks1.tambahPenjualanObat();
-                } else if (menu == 2) {
-                    ks1.editPenjualanObat();
-                } else if (menu == 3) {
-                    ks1.deletePenjualanObat();
-                } else if (menu == 4) {
-                    ks1.viewAllPenjualanObat();
-                }
+        String menu = scanner.next();
+        tk.clear();
+        penjualanobat ks1 = new penjualanobat();
+        if (isNumeric(String.valueOf(menu))) {
+            switch (menu) {
+                case "1":
+                    System.out.println("==Penjualan Obat==");
+                    System.out.println("1. Tambah");
+                    System.out.println("2. View");
+                    System.out.print("Pilih: ");
+                    menu = scanner.next();
+                    if (isNumeric(String.valueOf(menu))) {
+                        if (menu.equals("1")) {
+                            ks1.tambahPesanan();
+                        } else if (menu.equals("2")) {
+                            ks1.viewAllPenjualanObat();
+                        }
+                    } else {
+                        try {
+                            tk.clear();
+                            System.out.println("Masukkan input yang benar(angka)");
+                            Thread.sleep(3000);
+                            tk.clear();
+                            tk.menuKasir();
+                        } catch (InterruptedException e) {
+                            System.out.println(e);
+                        }
+                    }
+                    break;
+                case "2":
+                    System.out.println("==Pesanan==");
+                    System.out.println("1. View");
+                    System.out.print("Pilih: ");
+                    menu = scanner.next();
+                    if (isNumeric(String.valueOf(menu))) {
+                        if (menu.equals("1")) {
+                            ks1.viewPesanan();
+                        } else {
+                            System.out.println("yang anda masukkan salah");
+                        }
+                    } else {
+                        try {
+                            tk.clear();
+                            System.out.println("Masukkan input yang benar(angka)");
+                            Thread.sleep(3000);
+                            tk.clear();
+                            tk.menuKasir();
+                        } catch (InterruptedException e) {
+                            System.out.println(e);
+                        }
+                    }
 
-                break;
-            case 2:
-                System.out.println("==Detail Penjualan Obat==");
-                System.out.println("1. Tambah");
-                System.out.println("2. Edit");
-                System.out.println("3. Delete");
-                System.out.println("4. View");
-                System.out.print("Pilih: ");
-                menu = scanner.nextInt();
-                penjualanobat ks2 = new penjualanobat();
-
-                break;
-            default:
-                System.out.println("tidur");
+                    break;
+                case "3":
+                    main(null);
+                    break;
+                default:
+                    System.out.println("tidur");
+            }
+        } else {
+            try {
+                tk.clear();
+                System.out.println("Masukkan input yang benar(angka)");
+                Thread.sleep(3000);
+                tk.clear();
+                tk.menuKasir();
+            } catch (InterruptedException e) {
+                System.out.println(e);
+            }
         }
 
     }
 
-    public void menuAdmin() {
+    public void menuAdmin() throws SQLException, Exception {
         System.out.println("===MENU Admin===");
         System.out.println("1. Pembelian Obat");
         System.out.println("2. Detail Pembelian Obat");
         System.out.println("3. Supplier");
         System.out.println("4. Obat");
-        System.out.println("5. Kategori");
+        System.out.println("5. Kasir");
+        System.out.println("6. Penjualan Obat");
+        System.out.println("7. Log out");
         System.out.print("Pilih: ");
 
-        int menu = scanner.nextInt();
-        switch (menu) {
-            case 1:
-                System.out.println("==Pembelian Obat==");
-                System.out.println("1. Tambah");
-                System.out.println("2. Edit");
-                System.out.println("3. Delete");
-                System.out.println("4. View");
-                System.out.print("Pilih: ");
-                menu = scanner.nextInt();
-                pembelianobat adm1 = new pembelianobat(menu);
+        String menu = scanner.next();
+        tk.clear();
+        pembelianobat adm = new pembelianobat();
+        supplier sup = new supplier();
+        obat ob = new obat();
+        kasir ks = new kasir();
+        penjualanobat po = new penjualanobat();
+        if (isNumeric(String.valueOf(menu))) {
+            switch (menu) {
+                case "1":
+                    System.out.println("==Pembelian Obat==");
+                    System.out.println("1. Tambah");
+                    System.out.println("2. View");
+                    System.out.print("Pilih: ");
+                    menu = scanner.next();
+                    if (isNumeric(String.valueOf(menu))) {
+                        if (menu.equals("1")) {
+                            adm.tambahPembelianObat();
+                        } else if (menu.equals("2")) {
+                            adm.viewAllPembelianObat();
+                        }
+                    } else {
+                        try {
+                            tk.clear();
+                            System.out.println("Masukkan input yang benar(angka)");
+                            Thread.sleep(3000);
+                            tk.clear();
+                            tk.menuAdmin();
+                        } catch (InterruptedException e) {
+                            System.out.println(e);
+                        }
+                    }
+                    break;
+                case "2":
+                    System.out.println("==Detail Pembelian Obat==");
+                    System.out.println("1. View");
+                    System.out.print("Pilih: ");
+                    menu = scanner.next();
+                    if (isNumeric(String.valueOf(menu))) {
+                        if (menu.equals("1")) {
+                            adm.viewAllDetailPembelianObat();
+                        }
+                    } else {
+                        try {
+                            tk.clear();
+                            System.out.println("Masukkan input yang benar(angka)");
+                            Thread.sleep(3000);
+                            tk.clear();
+                            tk.menuAdmin();
+                        } catch (InterruptedException e) {
+                            System.out.println(e);
+                        }
+                    }
+                    break;
+                case "3":
+                    System.out.println("==Supplier==");
+                    System.out.println("1. Tambah");
+                    System.out.println("2. Edit");
+                    System.out.println("3. Delete");
+                    System.out.println("4. View");
+                    System.out.print("Pilih: ");
+                    menu = scanner.next();
+                    if (isNumeric(String.valueOf(menu))) {
+                        if (menu.equals("1")) {
+                            sup.tambahSupplier();
+                        } else if (menu.equals("2")) {
+                            sup.editSupplier();
+                        } else if (menu.equals("3")) {
+                            sup.deleteSupplier();
+                        } else if (menu.equals("4")) {
+                            sup.viewSupplier();
+                        }
+                    } else {
+                        try {
+                            tk.clear();
+                            System.out.println("Masukkan input yang benar(angka)");
+                            Thread.sleep(3000);
+                            tk.clear();
+                            tk.menuAdmin();
+                        } catch (InterruptedException e) {
+                            System.out.println(e);
+                        }
+                    }
+                    break;
+                case "4":
+                    System.out.println("==Obat==");
+                    System.out.println("1. Tambah");
+                    System.out.println("2. Edit");
+                    System.out.println("3. Delete");
+                    System.out.println("4. View");
+                    System.out.print("Pilih: ");
+                    menu = scanner.next();
+                    if (isNumeric(String.valueOf(menu))) {
+                        if (menu.equals("1")) {
+                            ob.tambahObat();
+                        } else if (menu.equals("2")) {
+                            ob.updateObat();
+                        } else if (menu.equals("3")) {
+                            ob.hapusObat();
+                        } else if (menu.equals("4")) {
+                            ob.view(Integer.parseInt(menu));
+                        }
+                    } else {
+                        try {
+                            tk.clear();
+                            System.out.println("Masukkan input yang benar(angka)");
+                            Thread.sleep(3000);
+                            tk.clear();
+                            tk.menuAdmin();
+                        } catch (InterruptedException e) {
+                            System.out.println(e);
+                        }
+                    }
+                    break;
+                case "5":
+                    System.out.println("==Kasir==");
+                    System.out.println("1. Tambah");
+                    System.out.println("2. Edit");
+                    System.out.println("3. Delete");
+                    System.out.println("4. View");
+                    System.out.print("Pilih: ");
+                    menu = scanner.next();
+                    if (isNumeric(String.valueOf(menu))) {
+                        if (menu.equals("1")) {
+                            ks.tambahKasir();
+                        } else if (menu.equals("2")) {
+                            ks.editKasir();
+                        } else if (menu.equals("3")) {
+                            ks.deleteKasir();
+                        } else if (menu.equals("4")) {
+                            ks.viewKasir();
+                        }
+                    } else {
+                        try {
+                            tk.clear();
+                            System.out.println("Masukkan input yang benar(angka)");
+                            Thread.sleep(3000);
+                            tk.clear();
+                            tk.menuAdmin();
+                        } catch (InterruptedException e) {
+                            System.out.println(e);
+                        }
+                    }
+                    break;
+                case "6":
+                    System.out.println("==PenjualanObat==");
+                    System.out.println("1. View penjualan obat");
+                    System.out.println("2. View pesanan");
+                    System.out.print("Pilih: ");
+                    menu = scanner.next();
+                    if (isNumeric(String.valueOf(menu))) {
+                        if (menu.equals("1")) {
+                            po.viewAllPenjualanObat();
+                        } else if (menu.equals("2")) {
+                            po.viewPesanan();
+                        }
+                    } else {
+                        try {
+                            tk.clear();
+                            System.out.println("Masukkan input yang benar(angka)");
+                            Thread.sleep(3000);
+                            tk.clear();
+                            tk.menuAdmin();
+                        } catch (InterruptedException e) {
+                            System.out.println(e);
+                        }
+                    }
+                    break;
+                case "7":
+                    main(null);
+                default:
+                    System.out.println("yang anda masukkan salah");
 
-                break;
-            case 2:
-                System.out.println("==Detail Penjualan Obat==");
-                System.out.println("1. Tambah");
-                System.out.println("2. Edit");
-                System.out.println("3. Delete");
-                System.out.println("4. View");
-                System.out.print("Pilih: ");
-                menu = scanner.nextInt();
-                pembelianobat adm2 = new pembelianobat(menu);
-                break;
-            case 3:
-                System.out.println("==Supplier==");
-                System.out.println("1. Tambah");
-                System.out.println("2. Edit");
-                System.out.println("3. Delete");
-                System.out.println("4. View");
-                System.out.print("Pilih: ");
-                menu = scanner.nextInt();
-                pembelianobat adm3 = new pembelianobat(menu);
-                break;
-            case 4:
-                System.out.println("==Obat==");
-                System.out.println("1. Tambah");
-                System.out.println("2. Edit");
-                System.out.println("3. Delete");
-                System.out.println("4. View");
-                System.out.print("Pilih: ");
-                menu = scanner.nextInt();
-                pembelianobat adm4 = new pembelianobat(menu);
-                break;
-            case 5:
-                System.out.println("==Kategori==");
-                System.out.println("1. Tambah");
-                System.out.println("2. Edit");
-                System.out.println("3. Delete");
-                System.out.println("4. View");
-                System.out.print("Pilih: ");
-                menu = scanner.nextInt();
-                pembelianobat adm5 = new pembelianobat(menu);
-                break;
-            default:
-                System.out.println("tidur");
+            }
+        } else
 
+        {
+            try {
+                tk.clear();
+                System.out.println("Masukkan input yang benar(angka)");
+                Thread.sleep(3000);
+                tk.clear();
+                tk.menuAdmin();
+            } catch (InterruptedException e) {
+                System.out.println(e);
+            }
         }
     }
 
